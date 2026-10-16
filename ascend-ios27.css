@@ -1,0 +1,335 @@
+/* ==========================================================================
+   Ascend — iOS 27 / Safari 27 fluid layer  (load AFTER styles.css)
+   Hardware reference: iPhone 17 (402 x 874 pt, Dynamic Island, 120 Hz).
+   Software target: iOS 27 + Safari 27 (Liquid Glass with the system
+   transparency slider, customizable <select>, scroll anchoring).
+   Everything phone-specific lives inside @media (max-width:760px) so the
+   desktop layout is untouched.
+   ========================================================================== */
+:root{
+  --ease-ios:cubic-bezier(.32,.72,0,1);      /* iOS sheet / push curve  */
+  --ease-spring:cubic-bezier(.34,1.45,.64,1); /* gentle overshoot        */
+  --glass:rgba(18,25,36,.72);
+  --glass-edge:rgba(255,255,255,.11);
+  --accent:#e5c17b;                           /* Ascend gold             */
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --sal:env(safe-area-inset-left,0px);
+  --sar:env(safe-area-inset-right,0px);
+}
+html{color-scheme:dark;-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--sat) + 70px)}
+body{min-height:100dvh;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,a,label,select,summary{touch-action:manipulation}
+/* icon sizing for every screen (phone tab bar overrides below) */
+.nav-item svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav-item em{font-style:normal}
+.stat-number,#liveClock,.timer,[class*=timer] output{font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance}
+
+@media (max-width:760px){
+  /* 1 · Safe areas + room for the floating tab bar ------------------------ */
+  .app-shell{display:block;min-height:100dvh}
+  .main{padding:0 max(16px,var(--sal)) calc(104px + var(--sab)) max(16px,var(--sar))}
+  .sidebar{display:contents}
+  .sidebar .brand,.sidebar .side-label,.sidebar-bottom{display:none}
+
+  /* 2 · Glass header that sits under the Dynamic Island ------------------- */
+  .topbar{position:sticky;top:0;z-index:30;height:auto;min-height:calc(var(--sat) + 48px);
+    padding:calc(var(--sat) + 6px) 4px 6px;margin:0 -16px;padding-inline:16px;border-bottom:0;
+    background:linear-gradient(180deg,rgba(5,8,13,.97) 62%,rgba(5,8,13,0));
+    -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    -webkit-mask-image:linear-gradient(#000 82%,transparent);mask-image:linear-gradient(#000 82%,transparent)}
+  .icon-button{width:44px;height:44px}
+
+  /* 3 · Floating glass tab bar with a sliding pill ------------------------ */
+  #nav{--i:0;--n:6;position:fixed;z-index:60;left:max(12px,var(--sal));right:max(12px,var(--sar));
+    bottom:calc(max(var(--sab) - 14px,0px) + 10px);display:grid;grid-template-columns:repeat(var(--n),1fr);
+    gap:0;padding:6px;border-radius:30px;background:var(--glass);border:1px solid var(--glass-edge);
+    -webkit-backdrop-filter:blur(28px) saturate(185%);backdrop-filter:blur(28px) saturate(185%);
+    box-shadow:0 14px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
+    transition:transform .5s var(--ease-ios),opacity .3s}
+  #nav::before{content:"";position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/var(--n));
+    border-radius:24px;background:rgba(229,193,123,.16);box-shadow:inset 0 0 0 1px rgba(229,193,123,.28);
+    transform:translateX(calc(var(--i)*100%));opacity:var(--pill,1);
+    transition:transform .55s var(--ease-ios),opacity .25s}
+  .nav-item{position:relative;z-index:1;flex-direction:column;justify-content:center;gap:3px;min-height:52px;
+    padding:6px 0;border-radius:24px;font-size:10px;letter-spacing:.1px;color:#8fa0b3;background:transparent!important;
+    transition:color .25s,transform .35s var(--ease-spring)}
+  .nav-item svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+    transition:transform .45s var(--ease-spring)}
+  .nav-item em{font-style:normal;font-weight:500}
+  .nav-item,.nav-item.active{border:0!important;box-shadow:none!important;outline:0}
+  .nav-item.active{color:var(--accent);font-weight:600}
+  .nav-item.active svg{transform:translateY(-1px) scale(1.08)}
+  .nav-item:active{transform:scale(.9)}
+  body:has(input:focus:not([type=checkbox],[type=radio],[type=range],[type=button],[type=submit],[type=file]),textarea:focus) #nav{transform:translateY(160%);opacity:0;pointer-events:none}
+
+  /* 4 · Typography that fits 402 pt -------------------------------------- */
+  .hero h1,.page-intro h1,.mind-hero h1{font-size:clamp(34px,10.4vw,44px);line-height:1.05;letter-spacing:-.04em}
+  .hero-sub,.page-intro p{font-size:15px;line-height:1.55}
+  .eyebrow{font-size:10px}
+
+  /* 5 · Cards: concentric radius, glass, tactile press ------------------- */
+  .panel,.stat-card,.skill-card,.habit-card,.book-card,.goal-card,.problem-card,.mind-toolkit,.roadmap-banner,.daily-mission-panel{
+    border-radius:24px;border:1px solid var(--glass-edge);padding:18px;transition:transform .35s var(--ease-ios),background .3s}
+  .panel:active,.skill-card:active,.habit-card:active,.book-card:active,.goal-card:active{transform:scale(.985)}
+  .primary-button,.secondary-button{min-height:48px;border-radius:16px;font-size:15px;font-weight:600;padding:0 18px;
+    transition:transform .3s var(--ease-spring),background .25s}
+  .primary-button:active,.secondary-button:active{transform:scale(.96)}
+  .check{width:26px;height:26px}
+  .priority-row,.setting-row{min-height:52px}
+
+  .priority-create,.task-create{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .priority-create input:first-child,.task-create input:first-child{grid-column:1/-1!important}
+  .priority-create input,.priority-create select,.priority-create button,.task-create button{grid-column:auto!important;grid-row:auto!important;width:100%}
+  .priority-create button.primary-button{grid-column:1/-1!important}
+
+  /* 6 · Inputs ≥16 px: stops Safari zooming the page on focus ------------ */
+  input,select,textarea,.settings-input,.settings-select{font-size:16px!important;min-height:46px;border-radius:14px}
+  textarea{min-height:96px}
+
+  /* 7 · Staggered, springy view entrance --------------------------------- */
+  .view.active{animation:none}
+  .view.active>*{animation:rise .6s var(--ease-ios) both}
+  .view.active>*:nth-child(2){animation-delay:.04s}.view.active>*:nth-child(3){animation-delay:.08s}
+  .view.active>*:nth-child(4){animation-delay:.12s}.view.active>*:nth-child(5){animation-delay:.16s}
+  .view.active>*:nth-child(n+6){animation-delay:.2s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+
+  /* 8 · Chips: edge-to-edge horizontal scroller with snap ----------------- */
+  .mental-categories{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:4px 16px 8px;
+    scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .mental-categories::-webkit-scrollbar{display:none}
+  .filter-chip{flex:none;scroll-snap-align:start;min-height:40px;padding:0 16px;border-radius:20px;transition:transform .3s var(--ease-spring)}
+  .filter-chip:active{transform:scale(.94)}
+
+  /* 9 · Settings → iOS "inset grouped" list ------------------------------ */
+  .settings-list{padding:0;background:none;border:0;display:grid;gap:0}
+  .settings-group-title{padding:26px 6px 8px;border:0!important;margin:0}
+  .logo-settings-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+  .logo-settings-controls .secondary-button{flex:1 1 120px;white-space:nowrap;display:grid;place-items:center;text-align:center}
+  .settings-group-title h2{font-size:20px;margin:6px 0 0}
+  .setting-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;
+    background:var(--glass);border-inline:1px solid var(--glass-edge);border-bottom:1px solid rgba(255,255,255,.06)}
+  .settings-group-title+.setting-row{border-top:1px solid var(--glass-edge);border-radius:22px 22px 0 0}
+  .setting-row:has(+.settings-group-title),.setting-row:last-child{border-radius:0 0 22px 22px;border-bottom:1px solid var(--glass-edge)}
+  .settings-group-title+.setting-row:has(+.settings-group-title){border-radius:22px}
+  .setting-row h3{font-size:16px;font-weight:500;margin:0}
+  .setting-row p{font-size:13px;line-height:1.4;color:var(--muted);margin:3px 0 0}
+  .setting-row>div:first-child{min-width:0;flex:1}
+  .settings-select{min-width:0;max-width:52vw;appearance:none;-webkit-appearance:none;padding:0 34px 0 14px;
+    background:rgba(255,255,255,.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238fa0b3' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 12px center}
+  /* native-feeling switch (keeps the hidden label text for screen readers) */
+  .settings-switch{display:inline-flex;flex:none}
+  .settings-switch span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .settings-switch input[type=checkbox]{appearance:none;-webkit-appearance:none;position:relative;width:51px;height:31px;min-height:0;padding:0;
+    border-radius:16px;border:0;background:rgba(120,120,128,.36);transition:background .3s var(--ease-ios)}
+  .settings-switch input[type=checkbox]::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;
+    background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.35);transition:transform .4s var(--ease-spring),width .2s}
+  .settings-switch input[type=checkbox]:checked{background:var(--accent)}
+  .settings-switch input[type=checkbox]:checked::after{transform:translateX(20px)}
+  .settings-switch input[type=checkbox]:active::after{width:32px}
+  .settings-switch input[type=checkbox]:checked:active::after{transform:translateX(15px)}
+
+  /* 10 · Sheets instead of centred dialogs ------------------------------- */
+  .task-alert-backdrop{place-items:end center;padding:0;animation:alertFade .3s both}
+  .task-alert-modal,dialog[open]{width:100%;max-width:none;margin:auto 0 0;border-radius:30px 30px 0 0;
+    max-height:88dvh;padding-bottom:calc(24px + var(--sab));animation:sheet .55s var(--ease-ios) both}
+  .task-alert-modal::before,dialog[open]::before{content:"";display:block;width:36px;height:5px;margin:-12px auto 14px;border-radius:3px;background:rgba(255,255,255,.22)}
+  dialog[open]{position:fixed;bottom:0;left:0;right:0}
+  dialog::backdrop{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  @keyframes sheet{from{transform:translateY(100%)}to{transform:none}}
+
+  /* 11 · Toast drops from the Dynamic Island ----------------------------- */
+  #toast{left:50%;right:auto;bottom:auto;top:calc(var(--sat) + 8px);transform:translate(-50%,-24px) scale(.9);
+    border-radius:22px;padding:12px 18px;background:rgba(236,242,250,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+    transition:transform .5s var(--ease-spring),opacity .25s}
+  #toast.show{transform:translate(-50%,0) scale(1)}
+
+  /* 12 · Auth gate ------------------------------------------------------- */
+  .auth-gate{min-height:100dvh;padding:calc(var(--sat) + 20px) 20px calc(var(--sab) + 20px)}
+  .auth-card{border-radius:30px}
+  .auth-submit{min-height:52px;border-radius:16px;font-size:16px}
+}
+
+/* Landscape phones: just respect the notch/island sides */
+@media (max-height:500px) and (orientation:landscape){.main{padding-left:max(28px,var(--sal));padding-right:max(28px,var(--sar))}}
+/* Mouse devices keep hover polish only where hover exists */
+@media (hover:none){.stat-card:hover,.skill-card:hover,.goal-card:hover,.book-card:hover{transform:none}}
+@media (prefers-reduced-transparency:reduce){#nav,.setting-row{background:#0d141d;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-reduced-motion:reduce){#nav::before,.view.active>*,.nav-item svg{transition:none!important;animation:none!important}}
+
+/* ==========================================================================
+   Insights: concept of the day · proof cards · honest weekly summary
+   ========================================================================== */
+.insight-card{margin-top:16px;border-radius:24px;padding:20px}
+.insight-card h3{font:600 22px/1.2 var(--serif);letter-spacing:-.02em;margin:8px 0 10px}
+.ins-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ins-chip{font:11px var(--mono);letter-spacing:.5px;color:var(--accent);background:rgba(229,193,123,.12);border-radius:20px;padding:6px 11px;white-space:nowrap}
+.ins-sub{color:var(--muted);font-size:14px;line-height:1.55;margin:0 0 14px}
+.ins-body{font-size:16px;line-height:1.6;color:#d6e0ec;margin:0 0 16px}
+.ins-q{margin:6px 0 12px;padding-top:14px;border-top:1px solid var(--glass-edge)}
+.ins-q small{font:10px var(--mono);letter-spacing:1px;color:var(--accent)}
+.ins-q strong{display:block;font-size:16px;font-weight:600;margin-top:6px;line-height:1.4}
+.ins-opts{display:grid;gap:8px}
+.ins-opt{display:flex;align-items:center;gap:12px;text-align:left;min-height:52px;padding:10px 14px;border-radius:16px;
+  border:1px solid var(--glass-edge);background:rgba(255,255,255,.04);color:var(--ink);font-size:15px;
+  transition:transform .3s var(--ease-spring),background .25s,border-color .25s}
+.ins-opt span{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--mono);background:rgba(255,255,255,.08);color:var(--muted)}
+.ins-opt:active:not(:disabled){transform:scale(.97)}
+.ins-opt:disabled{opacity:1;cursor:default}
+.ins-opt.ok{background:rgba(70,200,130,.16);border-color:rgba(70,200,130,.6)}
+.ins-opt.ok span{background:#46c882;color:#06210f}
+.ins-opt.bad{background:rgba(240,110,100,.14);border-color:rgba(240,110,100,.55)}
+.ins-opt.bad span{background:#f06e64;color:#2a0805}
+.ins-feedback{margin:14px 2px 10px;font-size:14px;color:var(--muted)}
+.ins-feedback.ok{color:#7be0ab}.ins-feedback.bad{color:#f4a39b}
+.ins-rate{display:grid;grid-template-columns:1fr 1fr;gap:10px;animation:rise .45s var(--ease-ios) both}
+.ins-stats{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:12px;color:var(--muted)}
+.ins-stats b{color:var(--ink);font-size:15px;font-variant-numeric:tabular-nums}
+
+.proof-day{font:10px var(--mono);letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin:16px 2px 8px}
+.proof-card{display:flex;gap:14px;align-items:flex-start;padding:14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--glass-edge);margin-bottom:8px}
+.proof-min{flex:none;width:46px;text-align:center;font:600 20px var(--serif);color:var(--accent);font-variant-numeric:tabular-nums}
+.proof-min small{display:block;font:9px var(--mono);letter-spacing:1px;color:var(--muted);margin-top:2px}
+.proof-main{min-width:0;display:grid;gap:4px}
+.proof-main strong{font-size:15px;font-weight:500;line-height:1.4}
+.proof-main small{color:var(--muted);font-size:12px}
+.proof-kind{justify-self:start;font:10px var(--mono);letter-spacing:.6px;color:#9cc3ff;background:rgba(128,191,255,.12);border-radius:10px;padding:3px 8px}
+.proof-missing{margin-top:16px;display:grid;gap:8px}
+.proof-missing small{font:10px var(--mono);letter-spacing:1px;color:var(--muted)}
+.proof-add{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:46px;padding:0 14px;border-radius:14px;border:1px dashed rgba(229,193,123,.4);background:transparent;color:var(--ink);font-size:14px;text-align:left}
+.proof-add b{color:var(--accent);font-weight:600;white-space:nowrap}
+
+.proof-backdrop{position:fixed;inset:0;z-index:9998;display:grid;place-items:center;padding:18px;background:rgba(1,4,8,.7);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);animation:alertFade .3s both}
+.proof-sheet{width:min(520px,100%);padding:22px 22px calc(22px + var(--sab));border-radius:28px;border:1px solid var(--glass-edge);
+  background:linear-gradient(160deg,#121a25,#090d14);box-shadow:0 30px 100px #000b;animation:alertRise .45s var(--ease-ios) both}
+.proof-sheet h2{font:600 26px/1.15 var(--serif);letter-spacing:-.02em;margin:10px 0 6px}
+.proof-sheet input{width:100%;margin:6px 0 16px;padding:0 14px;border-radius:14px;border:1px solid var(--glass-edge);background:rgba(255,255,255,.05);color:var(--ink);font-size:16px;min-height:50px}
+.proof-grab{display:none}
+.proof-kinds{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+.proof-actions{display:grid;grid-template-columns:1fr 2fr;gap:10px}
+@media (max-width:760px){
+  .proof-backdrop{place-items:end center;padding:0}
+  .proof-sheet{width:100%;border-radius:30px 30px 0 0;animation:sheet .55s var(--ease-ios) both}
+  .proof-grab{display:block;width:36px;height:5px;border-radius:3px;background:rgba(255,255,255,.22);margin:-8px auto 14px}
+}
+
+.wk-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;height:84px;align-items:end;margin:6px 0 18px}
+.wk-bars div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+.wk-bars i{display:block;width:100%;max-width:30px;border-radius:8px;background:rgba(143,160,179,.35);transition:height .7s var(--ease-ios)}
+.wk-bars .today i{background:var(--accent)}
+.wk-bars span{font:10px var(--mono);color:var(--muted)}
+.wk-lines{list-style:none;margin:0;padding:0;display:grid}
+.wk-lines li{display:grid;grid-template-columns:78px 1fr;gap:10px;padding:12px 0;border-top:1px solid var(--glass-edge);font-size:15px;line-height:1.45}
+.wk-lines small{font:10px var(--mono);letter-spacing:1px;color:var(--accent);padding-top:3px}
+.wk-drop{margin:14px 0 0;padding:14px;border-radius:16px;background:rgba(229,193,123,.08);border:1px solid rgba(229,193,123,.22);font-size:14px;line-height:1.5}
+.wk-drop small{display:block;font:10px var(--mono);letter-spacing:1px;color:var(--accent);margin-bottom:4px}
+.insight-card .secondary-button,.proof-sheet .secondary-button{color:#d3deec;background:rgba(255,255,255,.06);border:1px solid var(--glass-edge);border-radius:16px;min-height:48px;font-weight:600}
+.insight-card .primary-button,.proof-sheet .primary-button{border-radius:16px;min-height:48px}
+@media (max-width:760px){.analytics-stats{grid-template-columns:1fr 1fr!important}.analytics-stats .stat-card:last-child{grid-column:1/-1}}
+
+/* ==========================================================================
+   DESKTOP / LAPTOP / TABLET-LANDSCAPE  (>= 761px)
+   Same design language as the phone: glass sidebar, sliding gold pill,
+   spacious padding, keyboard shortcuts. Phone rules above are untouched.
+   ========================================================================== */
+@media (min-width:761px){
+  .main{padding:0 max(clamp(24px,4vw,56px),var(--sar)) 56px max(clamp(24px,4vw,56px),var(--sal));max-width:1360px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(5,8,13,.78);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .icon-button{width:38px;height:38px;transition:transform .3s var(--ease-spring),background .2s}
+  .icon-button:hover{background:rgba(255,255,255,.07)}.icon-button:active{transform:rotate(90deg) scale(.92)}
+
+  /* Sidebar: quiet glass rail with a pill that glides between items */
+  .sidebar{background:linear-gradient(180deg,rgba(14,20,30,.92),rgba(7,10,16,.96));border-right:1px solid var(--glass-edge)}
+  #nav{--i:0;position:relative;display:grid;gap:2px}
+  #nav::before{content:"";position:absolute;left:0;right:0;top:0;height:46px;border-radius:14px;
+    background:rgba(229,193,123,.13);box-shadow:inset 0 0 0 1px rgba(229,193,123,.26);
+    transform:translateY(calc(var(--i)*48px));opacity:var(--pill,1);transition:transform .5s var(--ease-ios),opacity .25s}
+  .nav-item{position:relative;z-index:1;height:46px;padding:0 14px;gap:13px;border-radius:14px;font-size:14px;color:#93a3b6;
+    border:0!important;box-shadow:none!important;background:transparent!important;transition:color .2s,transform .3s var(--ease-spring)}
+  .nav-item:hover{color:var(--ink)}
+  .nav-item:active{transform:scale(.97)}
+  .nav-item.active{color:var(--accent);font-weight:600}
+  .nav-item::after{content:attr(data-key);margin-left:auto;font:10px var(--mono);color:#5f6f82;border:1px solid #2a3646;border-radius:6px;padding:1px 6px;opacity:0;transition:opacity .2s}
+  .sidebar:hover .nav-item::after{opacity:.9}
+  .quiet-button{border-radius:12px;min-height:38px;transition:background .2s}
+
+  /* Roomier home form: text on top, then time / minutes / level / button */
+  .priority-create{display:grid;grid-template-columns:130px 100px minmax(110px,1fr) auto;gap:10px}
+  .priority-create input:first-child{grid-column:1/-1}
+  .priority-create button{grid-column:auto!important;white-space:nowrap}
+  .priority-create input,.priority-create select{min-height:44px;border-radius:12px}
+  .primary-button,.secondary-button{border-radius:12px;min-height:42px;font-weight:600;transition:transform .25s var(--ease-spring),background .2s,box-shadow .2s}
+  .primary-button:active,.secondary-button:active{transform:scale(.97)}
+
+  /* Hover lift only where a mouse exists */
+  .panel,.stat-card,.skill-card,.goal-card,.book-card{border-radius:20px;border:1px solid var(--glass-edge);transition:transform .35s var(--ease-ios),border-color .25s,box-shadow .35s}
+  .view.active>*{animation:rise .55s var(--ease-ios) both}
+  .view.active>*:nth-child(2){animation-delay:.04s}.view.active>*:nth-child(3){animation-delay:.08s}.view.active>*:nth-child(n+4){animation-delay:.12s}
+  .ins-opt:hover:not(:disabled){background:rgba(255,255,255,.08);border-color:rgba(229,193,123,.35)}
+  .proof-add:hover{background:rgba(229,193,123,.07)}
+
+  /* Insight cards: readable line length, weekly summary in two columns */
+  #conceptCard,#proofTimeline{max-width:860px}
+  #weeklyHonest{display:grid;grid-template-columns:minmax(240px,.8fr) 1.6fr;column-gap:44px;align-items:start}
+  #weeklyHonest .ins-head,#weeklyHonest .wk-drop,#weeklyHonest>.ins-sub{grid-column:1/-1}
+  #weeklyHonest .wk-bars{grid-column:1;margin:0;height:150px;align-self:stretch}
+  #weeklyHonest .wk-lines{grid-column:2}
+  #weeklyHonest .wk-lines li:first-child{border-top:0;padding-top:0}
+  .proof-backdrop{place-items:center}
+  .proof-sheet{padding-bottom:22px}
+  dialog{border-radius:24px}
+}
+@media (min-width:761px) and (hover:hover){
+  .panel:hover,.stat-card:hover,.skill-card:hover,.goal-card:hover,.book-card:hover{transform:translateY(-2px);border-color:rgba(229,193,123,.22);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+  .primary-button:hover{box-shadow:0 8px 24px rgba(229,193,123,.22)}
+}
+@media (min-width:761px) and (max-width:1024px){
+  .app-shell{grid-template-columns:210px minmax(0,1fr)!important}
+  .nav-item::after{display:none}
+  .priority-create{grid-template-columns:1fr 1fr}.priority-create button{grid-column:1/-1!important}
+  #weeklyHonest{grid-template-columns:1fr}#weeklyHonest .wk-lines,#weeklyHonest .wk-bars{grid-column:1}
+}
+@media (min-width:1500px){html{font-size:106%}.main{max-width:1480px}}
+
+/* Keyboard users on PC: clear, on-brand focus ring */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:0}
+.insight-card{margin-bottom:16px}
+@media (min-width:761px){.analytics-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media (min-width:761px) and (max-width:1024px){#weeklyHonest .wk-bars{margin:4px 0 20px;height:120px}}
+
+/* ==========================================================================
+   iOS 27 / Safari 27 additions
+   ========================================================================== */
+/* Liquid Glass: iOS 27 lets people slide the system between clear and tinted,
+   and Safari can't read that slider. So our glass keeps enough opacity to stay
+   legible at any setting, and switches to solid for the accessibility options. */
+@media (prefers-contrast:more){
+  :root{--glass:#0d141d;--glass-edge:rgba(255,255,255,.35)}
+  #nav,.setting-row,.topbar{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .nav-item{color:#c9d6e6}
+}
+
+/* Customizable <select> (Safari 27): the dropdown becomes a glass sheet that
+   matches the app instead of the stock system menu. Older browsers ignore this
+   whole block and keep the native menu styled above. */
+@supports (appearance:base-select){
+  .settings-select,.priority-create select,.field select,
+  .settings-select::picker(select),.priority-create select::picker(select),.field select::picker(select){appearance:base-select}
+  .settings-select,.priority-create select,.field select{background-image:none;padding:0 12px 0 14px;display:inline-flex;align-items:center;justify-content:space-between;gap:10px}
+  .settings-select::picker-icon,.priority-create select::picker-icon,.field select::picker-icon{color:var(--muted);transition:rotate .35s var(--ease-spring)}
+  .settings-select:open::picker-icon,.priority-create select:open::picker-icon,.field select:open::picker-icon{rotate:180deg}
+  select::picker(select){background:rgba(16,23,34,.94);color:var(--ink);border:1px solid var(--glass-edge);border-radius:20px;padding:6px;margin-top:6px;
+    box-shadow:0 24px 70px rgba(0,0,0,.55);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+    opacity:0;transform:translateY(-6px) scale(.98);transition:opacity .25s,transform .4s var(--ease-ios),overlay .4s allow-discrete,display .4s allow-discrete}
+  select::picker(select):popover-open{opacity:1;transform:none}
+  @starting-style{select::picker(select):popover-open{opacity:0;transform:translateY(-6px) scale(.98)}}
+  select option{min-height:44px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;font-size:16px;color:var(--ink);transition:background .2s}
+  select option:hover,select option:focus-visible{background:rgba(255,255,255,.08)}
+  select option:checked{background:rgba(229,193,123,.16);color:var(--accent);font-weight:600}
+  select option::checkmark{color:var(--accent)}
+}
+@media (prefers-reduced-motion:reduce){select::picker(select),.settings-select::picker-icon{transition:none!important}}

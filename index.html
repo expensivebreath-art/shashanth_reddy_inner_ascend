@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05080d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ascend">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Ascend — The Inner OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="ascend-ios27.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+</head>
+<body>
+<div class="app-shell" id="appShell">
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="Shashanth Reddy Space home">
+      <span class="brand-mark ascend-mark" id="sidebarBrandMark" aria-hidden="true"><span>↗</span><i></i></span><span><strong>ASCEND</strong><small>THE INNER OS</small></span>
+    </a>
+    <div class="side-label">WORKSPACE</div>
+    <nav id="nav">
+      <button class="nav-item active" data-view="overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-5H9v5H5a1 1 0 0 1-1-1z"/></svg><em>Home</em></button>
+      <button class="nav-item" data-view="learn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg><em>Learn</em></button>
+      <button class="nav-item" data-view="practice"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 1.5M9.5 3h5"/></svg><em>Practice</em></button>
+      <button class="nav-item" data-view="usage"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h3"/></svg><em>App patterns</em></button>
+      <button class="nav-item" data-view="journal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H20v16H5.5A1.5 1.5 0 0 1 4 18.5zM8 8h8M8 12h8M8 16h5"/></svg><em>Journal</em></button>
+      <button class="nav-item" data-view="mental"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM18.5 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><em>Mind</em></button>
+      <button class="nav-item" data-view="analytics"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l3.5-4 3 2.5L20 7"/></svg><em>Review</em></button>
+      <button class="nav-item" data-view="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M18 7h1M5 17h1M10 17h9"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><em>Settings</em></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="privacy-note"><span class="privacy-dot"></span><div><strong>Shared cloud</strong><small id="accountEmail">Sync enabled</small></div></div>
+      <button id="exportBtn" class="quiet-button">↥ Export backup</button>
+      <label class="quiet-button import-label" for="importFile">↧ Import backup</label><input id="importFile" type="file" accept="application/json" hidden>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb">SHASHANTH REDDY <span>/</span> <b id="crumbName">SPACE</b></div>
+      <div class="top-actions"><span class="local-indicator"><i></i> LOCAL MODE</span><button id="resetDay" class="icon-button" title="Reset today's habit checks">↻</button></div>
+    </header>
+    <section class="view active" id="view-overview">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR UNIVERSE / TODAY</div>
+          <h1 id="greetingTitle">Good morning,<br><em>Shashanth.</em></h1>
+          <p class="hero-sub" id="greetingLine">A calm mind builds a sharper life.</p>
+          <div class="hero-meta"><span id="todayDate"></span><span class="meta-sep">/</span><span id="liveClock">YOUR LOCAL TIME</span></div>
+        </div>
+      </div>
+
+      <div class="home-grid">
+        <section class="panel today-panel"><div class="panel-heading"><div><div class="eyebrow">THE IMPORTANT FEW</div><h3>Today's priorities <span class="section-note" id="priorityCount">0 / 3</span></h3></div><button class="text-button" id="managePriorities">Manage ↗</button></div>
+          <div id="priorityList" class="priority-list"></div>
+          <form id="priorityForm" class="priority-create"><input id="priorityInput" maxlength="120" placeholder="What matters most today?" aria-label="Priority task" required><input id="priorityTime" type="time" aria-label="Priority start time" value="09:00"><input id="priorityDuration" type="number" min="5" max="480" step="5" value="60" aria-label="Duration in minutes"><select id="priorityLevel" aria-label="Priority level"><option>High</option><option selected>Medium</option><option>Low</option></select><button type="submit" class="primary-button">＋ Add priority</button></form>
+        </section>
+        <section class="panel tasks-panel"><div class="panel-heading"><div><div class="eyebrow">EVERYTHING ELSE</div><h3>Today's tasks</h3></div><button class="text-button" id="addTaskToggle">＋ Add task</button></div>
+          <form id="taskForm" class="task-create" hidden><input id="taskInput" maxlength="140" placeholder="Task name" required><input id="taskTime" type="time" value="11:00" aria-label="Task reminder time"><label class="inline-check"><input id="taskReminder" type="checkbox" checked> Remind me</label><button class="primary-button" type="submit">Save task</button></form>
+          <div class="task-filters"><button class="filter-chip active" data-task-filter="all">All</button><button class="filter-chip" data-task-filter="priority">Priorities</button><button class="filter-chip" data-task-filter="other">Other tasks</button></div><div id="todayTasks" class="today-tasks"></div>
+        </section>
+      </div>
+      <div class="section-heading compact-heading"><div><div class="eyebrow">REPEATABLE, NOT PERFECT</div><h2>Evolve</h2></div><button class="text-button" data-go="habits">Manage habits ↗</button></div>
+      <div id="homeHabits" class="home-habits"></div>
+      <div class="home-grid secondary-home-grid">
+        <section class="panel"><div class="panel-heading"><div><div class="eyebrow">CURRENT FOCUS</div><h3>One thing at a time</h3></div><button class="text-button" data-go="deepwork">Open focus ↗</button></div><p class="entry-desc">Choose one outcome, start a focus session, and record what you can demonstrate.</p><button class="primary-button" data-go="deepwork">Start deep work</button></section>
+        <section class="panel"><div class="panel-heading"><div><div class="eyebrow">YOUR MENTAL SPACE</div><h3>Mental Space</h3></div><button class="text-button" data-go="mental">Open ↗</button></div></section>
+      </div>
+      <section class="panel insta-analyser-card" aria-labelledby="instaAnalyserTitle">
+        <div class="insta-analyser-main">
+          <div class="instagram-official-mark" role="img" aria-label="Instagram logo">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="instaGradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FFDC80"/><stop offset=".32" stop-color="#F77737"/><stop offset=".62" stop-color="#E1306C"/><stop offset=".82" stop-color="#C13584"/><stop offset="1" stop-color="#833AB4"/></linearGradient></defs><rect x="3" y="3" width="42" height="42" rx="12" fill="url(#instaGradient)"/><rect x="11" y="11" width="26" height="26" rx="8" fill="none" stroke="#fff" stroke-width="2.8"/><circle cx="24" cy="24" r="6.5" fill="none" stroke="#fff" stroke-width="2.8"/><circle cx="32.2" cy="15.9" r="1.9" fill="#fff"/></svg>
+          </div>
+          <div class="insta-analyser-copy"><div class="eyebrow">SOCIAL MEDIA / SELF-AWARENESS</div><h3 id="instaAnalyserTitle">Insta Psycho Analyser</h3><p>Explore your overall Instagram usage, time patterns, and attention habits — all in one clear personal overview.</p></div>
+          <span class="insta-coming-badge">COMING SOON</span>
+        </div>
+        <div class="insta-analyser-footer"><span>Usage overview <i>·</i> Patterns <i>·</i> Attention insights</span><button class="secondary-button" type="button" disabled aria-disabled="true">Feature in development</button></div>
+      </section>
+      <section class="usage-labs-section" aria-labelledby="usageLabsTitle">
+        <div class="section-heading compact-heading"><div><div class="eyebrow">DIGITAL BEHAVIOUR / SELF-AWARENESS</div><h2 id="usageLabsTitle">Digital Pattern Analysers</h2><p class="section-subtitle">Understand how your feeds, searches, browsers, and phone habits shape your attention. All features below are coming soon.</p></div></div>
+        <div class="usage-labs-grid">
+          <article class="panel analyser-feature-card youtube-card">
+            <div class="analyser-feature-top"><div class="feature-brand-icon youtube-brand" role="img" aria-label="YouTube logo"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="9" width="42" height="30" rx="9" fill="#FF0033"/><path d="M20 16.5 32 24 20 31.5Z" fill="#fff"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div>
+            <div class="eyebrow">YOUTUBE / SHORT-FORM FEEDS</div><h3>YouTube Shorts Algorithm Analyser</h3><p>Map the Shorts topics that keep pulling you back, repeated viewing loops, session length, and what you intended to watch versus what you actually watched.</p><div class="analyser-feature-tags"><span>Scroll loops</span><span>Topic patterns</span><span>Time drift</span></div>
+          </article>
+          <article class="panel analyser-feature-card youtube-card">
+            <div class="analyser-feature-top"><div class="feature-brand-icon youtube-brand" role="img" aria-label="YouTube logo"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="9" width="42" height="30" rx="9" fill="#FF0033"/><path d="M20 16.5 32 24 20 31.5Z" fill="#fff"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div>
+            <div class="eyebrow">YOUTUBE / WATCH HABITS</div><h3>YouTube Attention & Watch Pattern Analyser</h3><p>Compare learning, entertainment, background watching, and late-night sessions to see which viewing habits support your goals and which leave you drained.</p><div class="analyser-feature-tags"><span>Watch intent</span><span>Session trends</span><span>Learning vs. escape</span></div>
+          </article>
+          <article class="panel analyser-feature-card google-card">
+            <div class="analyser-feature-top"><div class="feature-brand-icon google-brand" role="img" aria-label="Google logo"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M43 24.5c0-1.4-.1-2.7-.4-4H24v7.6h10.7a9.2 9.2 0 0 1-4 6v5h6.5C41 35.5 43 30.5 43 24.5Z"/><path fill="#34A853" d="M24 44c5.4 0 9.9-1.8 13.2-4.9l-6.5-5c-1.8 1.2-4 2-6.7 2-5.2 0-9.6-3.5-11.2-8.2H6.1v5.2A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.8 27.9a12 12 0 0 1 0-7.8v-5.2H6.1a20 20 0 0 0 0 18.2Z"/><path fill="#EA4335" d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.4 4 24 4A20 20 0 0 0 6.1 14.9l6.7 5.2C14.4 15.5 18.8 12 24 12Z"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div>
+            <div class="eyebrow">GOOGLE / SEARCH BEHAVIOUR</div><h3>Google Search Pattern Analyser</h3><p>Review what you search for, repeated query loops, curiosity trails, and whether searches lead to useful answers or endless tab-hopping.</p><div class="analyser-feature-tags"><span>Search themes</span><span>Repeat searches</span><span>Curiosity trails</span></div>
+          </article>
+          <article class="panel analyser-feature-card browser-card">
+            <div class="analyser-feature-top"><div class="feature-brand-pair" aria-label="Chrome and Brave browser icons"><span class="chrome-brand" role="img" aria-label="Chrome logo"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#EA4335"/><path d="M24 24 13 43A22 22 0 0 1 3 14h21Z" fill="#34A853"/><path d="M24 24 13 43a22 22 0 0 0 32-26H23Z" fill="#FBBC05"/><circle cx="24" cy="24" r="10" fill="#4285F4" stroke="#EAF2FF" stroke-width="2"/></svg></span><span class="brave-brand" role="img" aria-label="Brave browser logo"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 5h22l3 8 5 5-4 17-15 9L9 35 5 18l5-5Z" fill="#FB542B"/><path d="m15 13 9-4 9 4 3 8-5 13-7 4-7-4-5-13Z" fill="#fff"/><path d="m16 20 5 2 3-2 3 2 5-2-3 7-5 4-5-4Z" fill="#FB542B"/></svg></span></div><span class="analyser-coming-badge">COMING SOON</span></div>
+            <div class="eyebrow">CHROME + BRAVE / BROWSING</div><h3>Browser Behaviour Analyser</h3><p>Spot tab overload, repeated site visits, research rabbit holes, and the difference between purposeful browsing and getting distracted online.</p><div class="analyser-feature-tags"><span>Tab hopping</span><span>Site patterns</span><span>Focus drift</span></div>
+          </article>
+          <article class="panel analyser-feature-card phone-card">
+            <div class="analyser-feature-top"><div class="feature-brand-icon phone-brand" role="img" aria-label="Mobile phone icon"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="11" y="3" width="26" height="42" rx="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M19 9h10M21 38h6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="24" r="7" fill="currentColor" opacity=".15"/><path d="M24 19v5l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div>
+            <div class="eyebrow">PHONE / DAILY DEVICE HABITS</div><h3>Mobile Usage Pattern Analyser</h3><p>Track screen-time check-ins, pickups, call time, notification-driven opens, and late-night phone use to uncover routines that affect sleep and concentration.</p><div class="analyser-feature-tags"><span>Pick-up triggers</span><span>Call patterns</span><span>Night use</span></div>
+          </article>
+        </div>
+        <p class="analyser-data-note">Planned features. They will need usage records or supported device data; this preview does not automatically access private app activity.</p>
+      </section>
+      <section class="panel weekly-panel">
+        <div class="panel-heading"><div><div class="eyebrow">SHOW UP OFTEN</div><h3>Last 7 days</h3></div><button class="text-button" data-go="analytics">View analytics ↗</button></div>
+        <div id="weekChart" class="week-chart" aria-label="Habit completion over the last seven days"></div>
+      </section>
+    </section>
+
+    <section class="view" id="view-learn"><div class="page-intro"><div class="eyebrow">01 / BUILD CAPABILITY</div><h1>Learn with intent.</h1><p>One active cybersecurity path. Understand the concept, practise safely, and keep evidence.</p></div><div class="roadmap-banner glass-card"><div><span class="eyebrow">CURRENT PATH</span><h2>Cybersecurity foundations</h2><p>Linux · Networking · Web fundamentals · Safe labs</p></div><button class="primary-button" data-go="roadmap">Open roadmap ↗</button></div><div class="section-heading"><div><div class="eyebrow">YOUR SKILLS</div><h2>Skill register</h2></div><button class="primary-button" data-go="security">Open skill details ↗</button></div><div id="learnSkillSummary" class="learn-summary"></div><div class="section-heading"><div><div class="eyebrow">PRACTICAL PROOF</div><h2>Learning resources</h2></div></div><div class="resource-shortcuts"><article class="panel"><span class="resource-icon">⌘</span><h3>Linux & command line</h3><p>Learn the operating system before relying on tools.</p><button class="text-button" data-go="roadmap">Study path ↗</button></article><article class="panel"><span class="resource-icon">⌁</span><h3>Networking foundations</h3><p>Understand IPs, ports, DNS, TCP/UDP and HTTP/S.</p><button class="text-button" data-go="security">Track skills ↗</button></article><article class="panel"><span class="resource-icon">▣</span><h3>Safe hands-on labs</h3><p>Practice only in owned, authorized, or intentionally vulnerable environments.</p><button class="text-button" data-go="security">Open labs ↗</button></article></div></section>
+    <section class="view" id="view-practice"><div class="page-intro"><div class="eyebrow">02 / DO THE WORK</div><h1>Practice deliberately.</h1><p>One focus session, a shared task list, and simple routines. No duplicate task manager.</p></div><div class="practice-actions"><button class="primary-button" data-go="deepwork">Start focus timer ↗</button><button class="secondary-button" data-go="habits">Manage Evolve ↗</button><button class="secondary-button" data-go="overview">Today's tasks ↗</button></div><div class="section-heading"><div><div class="eyebrow">RECENT EVIDENCE</div><h2>Focus sessions</h2></div></div><div id="practiceSessions" class="session-list"></div><div class="panel note-panel"><strong>Practice rule</strong><p>Measure what you can demonstrate, not how busy you felt.</p></div></section>
+    <section class="view" id="view-mental"><div class="page-intro"><div class="eyebrow">PERSONAL SPACE</div><h1>Mental <em>Space.</em></h1></div><div id="mentalResources" class="mental-resources"></div></section>
+    <section class="view" id="view-settings"><div class="page-intro"><div class="eyebrow">SYSTEM PREFERENCES</div><h1>Your universe,<br><em>your rules.</em></h1><p>Personal controls for reminders, focus, appearance, and data.</p></div>
+      <section class="panel settings-list">
+        <div class="settings-group-title"><span class="eyebrow">IDENTITY</span><h2>Appearance</h2></div>
+        <div class="setting-row"><div><h3>App logo</h3><p>Choose an image for Ascend inside the website and supported notifications. The installed Home Screen icon is controlled separately by iOS.</p><div class="logo-settings-controls"><img id="logoPreview" class="logo-preview" src="icon.svg" alt="Current Ascend logo"><label class="secondary-button logo-upload-label" for="appLogoUpload">Choose logo</label><input id="appLogoUpload" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden><button class="secondary-button" id="resetAppLogo" type="button">Reset default</button></div><p class="setting-hint">Square PNG, JPG, WebP, or SVG up to 1 MB.</p></div></div>
+        <div class="setting-row"><div><h3>Colour theme</h3><p>Choose graphite or a deeper pure-black background.</p></div><select id="appearanceTheme" class="settings-select"><option value="graphite">Graphite</option><option value="black">Pure black</option></select></div>
+        <div class="settings-group-title"><span class="eyebrow">REMINDERS</span><h2>Stay aware, not interrupted.</h2></div>
+        <div class="setting-row"><div><h3>Task reminders</h3><p>Allow notifications for timed tasks and habits.</p></div><label class="settings-switch"><input id="prefTaskReminders" type="checkbox" checked><span>Enabled</span></label></div>
+        <div class="setting-row"><div><h3>Quiet hours</h3><p>Suppress task and habit notifications during this time window.</p></div><div class="settings-inline"><label>From <input id="quietStart" type="time" value="22:00" class="settings-input"></label><label>Until <input id="quietEnd" type="time" value="06:00" class="settings-input"></label></div></div>
+        <div class="setting-row"><div><h3>Overdue alerts</h3><p>Include overdue tasks in the opening task alert.</p></div><label class="settings-switch"><input id="prefOverdueAlerts" type="checkbox" checked><span>Enabled</span></label></div>
+        <div class="setting-row"><div><h3>Opening task alert</h3><p>Choose when Ascend shows overdue and due-soon tasks.</p></div><select id="startupAlertMode" class="settings-select"><option value="every">Every time the app opens</option><option value="daily">Once per day</option><option value="never">Never</option></select></div>
+        <div class="setting-row"><div><h3>Browser notifications</h3><p>Grant permission for notifications in this browser. Background delivery on iPhone requires supported web-push setup.</p></div><button class="secondary-button" id="enableNotifications">Enable</button></div>
+        <div class="setting-row"><div><h3>Test notification</h3><p>Send a notification titled Ascend.</p></div><button class="secondary-button" id="testNotification">Send test</button></div>
+        <div class="settings-group-title"><span class="eyebrow">DEEP WORK</span><h2>Start with your preferred rhythm.</h2></div>
+        <div class="setting-row"><div><h3>Default focus length</h3><p>Applied when you open Deep Work. You can still choose 25, 45, or 60 minutes in the timer.</p></div><select id="defaultFocusLength" class="settings-select"><option value="25">25 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option></select></div>
+        <div class="setting-row"><div><h3>Break duration</h3><p>Preferred recovery break after a completed focus session.</p></div><select id="defaultBreakLength" class="settings-select"><option value="5">5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></div>
+        <div class="setting-row"><div><h3>Completion notification</h3><p>Notify when the Deep Work timer ends.</p></div><label class="settings-switch"><input id="prefFocusNotify" type="checkbox" checked><span>Enabled</span></label></div>
+        <div class="setting-row"><div><h3>Completion sound</h3><p>Play a short tone when a focus session finishes.</p></div><label class="settings-switch"><input id="prefFocusSound" type="checkbox"><span>Enabled</span></label></div>
+        <div class="setting-row"><div><h3>Sound volume</h3><p>Set the completion tone volume.</p></div><div class="settings-inline"><input id="prefFocusVolume" type="range" min="10" max="100" value="55"><output id="prefFocusVolumeValue">55%</output></div></div>
+        <div class="settings-group-title"><span class="eyebrow">ACCOUNT & DATA</span><h2>Your data stays yours.</h2></div>
+        <div class="setting-row"><div><h3>Cloud sync</h3><p>Shared tracker data across browsers.</p></div><span class="setting-status" id="cloudStatus">Connecting…</span></div>
+        <div class="setting-row"><div><h3>Last successful cloud save</h3><p>Most recent successful save reported by this browser.</p></div><span class="setting-status" id="lastCloudSave">Not confirmed yet</span></div>
+        <div class="setting-row"><div><h3>Data backup</h3><p>Export your tracker data to a JSON backup file.</p></div><button class="secondary-button" id="settingsExport">Export backup</button></div>
+      </section></section>
+    <section class="view" id="view-security">
+      <div class="page-intro"><div class="eyebrow">01 / TECHNICAL DEPTH</div><h1>Cybersecurity.</h1><p>Start with the fundamentals. Learn one concept, practise it safely, and keep evidence of what you understand.</p></div>
+      <section class="panel weekly-plan-panel"><div class="weekly-plan-head"><div><div class="eyebrow">YOUR FIRST WEEK / 45–60 MINUTES A DAY</div><h2>Seven-day cybersecurity plan</h2><p id="weekRange">A practical beginner plan · edit any task as you go.</p></div><div class="week-plan-progress"><strong id="weekPlanPercent">0%</strong><span id="weekPlanCount">0 / 21 tasks</span></div></div><div class="week-plan-bar"><span id="weekPlanBar"></span></div><div id="weekPlanList" class="week-plan-list"></div><div class="week-plan-foot"><span>Legal practice only · repeat a day whenever needed.</span><button class="secondary-button" id="resetWeekPlan">Reset checkmarks</button></div></section>
+      <div class="section-heading"><div><div class="eyebrow">SKILL REGISTER</div><h2>Build your foundation</h2></div><button class="primary-button" id="addSkillBtn">＋ Add skill</button></div>
+      <div id="skillsList" class="skill-list"></div>
+      <div class="panel note-panel"><strong>Field rule</strong><p>Keep practice legal and authorized. Use intentionally vulnerable labs, CTFs, and systems you own or have explicit permission to test.</p></div>
+    </section>
+
+    <section class="view" id="view-habits">
+      <div class="page-intro"><div class="eyebrow">02 / DAILY PRACTICE</div><h1>Small actions.<br><em>Compounding returns.</em></h1><p>Track today's commitments without turning your life into a spreadsheet.</p></div>
+      <div class="section-heading"><div><div class="eyebrow">DAILY CHECKLIST</div><h2 id="habitDateHeading">Your habits</h2></div><button class="primary-button" id="addHabitBtn">＋ Add habit</button></div>
+      <div id="habitsList" class="habit-list"></div>
+      <div class="habit-footer"><span id="habitSummary">0 completed</span><span id="habitEncouragement">Start with one.</span></div>
+    </section>
+
+    <section class="view" id="view-goals">
+      <div class="page-intro"><div class="eyebrow">03 / DIRECTION</div><h1>Give the future<br><em>a deadline.</em></h1><p>Make each ambition concrete enough to act on, and small enough to start.</p></div>
+      <div class="section-heading"><div><div class="eyebrow">OUTCOMES IN PROGRESS</div><h2>Your goals</h2></div><button class="primary-button" id="addGoalBtn">＋ Add goal</button></div>
+      <div id="goalsList" class="goals-grid"></div>
+    </section>
+
+    <section class="view" id="view-library">
+      <div class="page-intro"><div class="eyebrow">04 / INTELLECTUAL PRACTICE</div><h1>Read closely.<br><em>Think independently.</em></h1><p>Capture the ideas that challenge your assumptions and deserve a second look.</p></div>
+      <div class="section-heading"><div><div class="eyebrow">READING & IDEAS</div><h2>Bookshelf</h2></div><button class="primary-button" id="addBookBtn">＋ Add book</button></div>
+      <div id="booksList" class="books-list"></div>
+    </section>
+
+    <section class="view" id="view-analytics">
+      <div class="page-intro"><div class="eyebrow">05 / EVIDENCE OVER FEELING</div><h1>Measure the <em>trajectory.</em></h1><p>Progress analytics are useful when they tell you what to change next—not just how busy you felt.</p></div>
+      <div class="stats-grid analytics-stats">
+        <article class="stat-card"><div class="stat-top"><span>7-DAY HABIT RATE</span></div><div class="stat-number" id="analyticsRate">0%</div><small>Across recorded habit check-ins.</small></article>
+        <article class="stat-card"><div class="stat-top"><span>GOAL COMPLETION</span></div><div class="stat-number" id="analyticsGoals">0%</div><small>Completed goals versus all goals.</small></article>
+        <article class="stat-card"><div class="stat-top"><span>SKILL PRACTICE</span></div><div class="stat-number" id="analyticsSkills">0%</div><small>Average self-assessed skill level.</small></article>
+      </div>
+      <section class="panel"><div class="panel-heading"><div><div class="eyebrow">WEEKLY CONSISTENCY</div><h3>Habit completion</h3></div><span class="section-note">LAST 7 DAYS</span></div><div id="analyticsChart" class="week-chart large-chart"></div></section>
+      <section class="panel analytics-insight"><div class="eyebrow">INTERPRETATION</div><h3 id="insightTitle">Start collecting evidence.</h3><p id="insightText">Check in daily. After a week, use the pattern to adjust your workload.</p></section>
+    </section>
+
+    <section class="view" id="view-motivation">
+      <div class="mind-hero">
+        <div class="mind-aurora aurora-one"></div><div class="mind-aurora aurora-two"></div><div class="mind-aurora aurora-three"></div>
+        <div class="mind-hero-content">
+          <div class="eyebrow"><span class="eyebrow-line"></span> INNER SYSTEMS / CALM OPERATIONS</div>
+          <h1>You are not broken.<br><em>You need a protocol.</em></h1>
+          <p>Step out of the noise. Find the friction, choose one small action, and return to your life with more clarity. No shame. No fake hype. Just practical tools.</p>
+          <div class="mind-status"><span class="breathing-orb"></span><span>PAUSE · NOTICE · RESET · MOVE</span></div>
+        </div>
+        <div class="mind-watermark">SB<span> / MINDSPACE</span></div>
+      </div>
+      <div class="section-heading mind-heading"><div><div class="eyebrow">CHOOSE WHAT'S HAPPENING</div><h2>What are you struggling with right now?</h2></div><span class="section-note">NO JUDGEMENT / JUST THE NEXT STEP</span></div>
+      <div id="problemGrid" class="problem-grid"></div>
+      <section id="solutionPanel" class="solution-panel" aria-live="polite">
+        <div class="solution-kicker">YOUR RESET PROTOCOL</div><div class="solution-empty"><div class="solution-orb">✧</div><h3>Choose a pattern above.</h3><p>We'll turn the problem into a small, practical next move.</p></div>
+      </section>
+      <section class="panel mind-toolkit"><div class="panel-heading"><div><div class="eyebrow">WHEN YOUR MIND IS LOUD</div><h3>A 90-second reset</h3></div><span class="section-note">USE ANYTIME</span></div>
+        <div class="reset-steps"><div><span>01</span><strong>Exhale slowly</strong><p>Take a comfortable breath in, then let the exhale be a little longer. Repeat gently.</p></div><div><span>02</span><strong>Name the state</strong><p>Say: “I'm noticing resistance / anxiety / distraction.” A feeling is information, not an order.</p></div><div><span>03</span><strong>Make it smaller</strong><p>Ask: “What is the smallest useful action I can finish in five minutes?” Do only that.</p></div></div>
+        <p class="mind-disclaimer">These are practical self-help tools, not a diagnosis or a replacement for professional care. If distress is persistent, severe, or affecting daily life, reaching out to a qualified mental-health professional is a strong next step.</p>
+      </section>
+    </section>
+
+
+    <section class="view" id="view-roadmap">
+      <div class="page-intro"><div class="eyebrow">06 / SKILL ACQUISITION</div><h1>Learn the system.<br><em>Earn the capability.</em></h1><p>A beginner-friendly path from fundamentals to safe hands-on practice. Tick a lesson only after you can explain or demonstrate it.</p></div>
+      <div class="roadmap-banner glass-card"><div><span class="eyebrow">YOUR CURRENT TRACK</span><h2>Cybersecurity foundations</h2><p>45–60 minutes a day · legal practice only · learn before tools</p></div><div class="roadmap-progress"><strong id="roadmapProgress">0%</strong><span>ROADMAP COMPLETE</span><div class="progress-track"><div id="roadmapBar" class="progress-fill"></div></div></div></div>
+      <div id="roadmapList" class="roadmap-list"></div>
+    </section>
+
+    <section class="view" id="view-deepwork">
+      <div class="page-intro"><div class="eyebrow">07 / ATTENTION TRAINING</div><h1>Enter the <em>flow state.</em></h1><p>One target. One session. No pressure to feel ready. Start with 25 minutes and let the environment do some of the work.</p></div>
+      <div class="deepwork-layout"><section class="panel focus-console"><div class="eyebrow">FOCUS SESSION / LOCAL TIMER</div><div class="timer-orb"><div class="timer-orb-inner"><span id="timerMode">FOCUS</span><strong id="timerDisplay">25:00</strong><small id="timerCaption">ONE THING AT A TIME</small></div></div><div class="timer-presets"><button class="timer-preset active" data-minutes="25">25 min</button><button class="timer-preset" data-minutes="45">45 min</button><button class="timer-preset" data-minutes="60">60 min</button></div><div class="timer-actions"><button class="primary-button" id="timerStart">Start focus</button><button class="secondary-button" id="timerReset">Reset</button></div><p class="micro-note">The timer runs while this page is open. Choose a single outcome before starting.</p><div class="focus-end-options"><label><input id="focusNotifyEnd" type="checkbox" checked> Notify me when Deep Work ends</label><label><input id="focusSoundEnd" type="checkbox"> Play an end sound</label><label class="focus-volume-label">Sound volume <input id="focusSoundVolume" type="range" min="10" max="100" value="55"></label></div></section>
+      <section class="panel session-setup"><div class="eyebrow">DEFINE THE SESSION</div><h3>What will you finish?</h3><form id="sessionForm"><label class="field-label" for="sessionTopic">Focus target</label><input id="sessionTopic" maxlength="120" placeholder="e.g. Understand DNS and ports" required><label class="field-label" for="sessionOutput">Visible outcome</label><textarea id="sessionOutput" rows="3" maxlength="280" placeholder="What will exist when this session ends?"></textarea><label class="field-label" for="sessionNotes">Session reflection</label><textarea id="sessionNotes" rows="3" maxlength="500" placeholder="What worked? What distracted you? What is next?"></textarea><button class="primary-button" type="submit">Save session log</button></form></section></div>
+      <section class="panel session-history"><div class="panel-heading"><div><div class="eyebrow">EVIDENCE OF ATTENTION</div><h3>Recent sessions</h3></div><span class="section-note" id="focusTotal">0 MINUTES RECORDED</span></div><div id="sessionList" class="session-list"></div></section>
+    </section>
+
+    <section class="view" id="view-experiments">
+      <div class="page-intro"><div class="eyebrow">08 / PERSONAL RESEARCH</div><h1>Test what <em>works for you.</em></h1><p>Small experiments beat vague self-judgment. Change one variable, observe the result, and keep what earns its place.</p></div>
+      <div class="panel experiment-starter"><div class="eyebrow">EXAMPLE HYPOTHESIS</div><h3>“If I put my phone in another room, I'll complete a 25-minute study block with fewer interruptions.”</h3><p>Define a prediction, test it a few times, and record what actually happened. One result is a clue, not proof.</p></div>
+      <section class="panel"><div class="panel-heading"><div><div class="eyebrow">RESEARCH LOG</div><h3>Your experiments</h3></div></div><form id="experimentForm" class="stack-form"><div class="field-row"><div class="field"><label for="expTitle">Experiment</label><input id="expTitle" maxlength="120" placeholder="Phone outside room" required></div><div class="field"><label for="expCategory">Area</label><select id="expCategory"><option>FOCUS</option><option>CONSISTENCY</option><option>LEARNING</option><option>SLEEP & ENERGY</option><option>ENVIRONMENT</option></select></div></div><div class="field"><label for="expHypothesis">Hypothesis</label><textarea id="expHypothesis" rows="2" maxlength="500" placeholder="If I change X, I expect Y because…"></textarea></div><div class="field"><label for="expResult">Observation / result</label><textarea id="expResult" rows="2" maxlength="700" placeholder="What happened? What surprised you?"></textarea></div><button class="primary-button" type="submit">＋ Save experiment</button></form></section><div id="experimentList" class="experiment-list"></div>
+    </section>
+
+    <section class="view" id="view-knowledge">
+      <div class="page-intro"><div class="eyebrow">09 / CONNECTED THINKING</div><h1>Collect less.<br><em>Connect more.</em></h1><p>A private knowledge vault for cybersecurity, psychology, neuroscience, philosophy, and questions you haven't answered yet.</p></div>
+      <section class="panel"><div class="panel-heading"><div><div class="eyebrow">KNOWLEDGE CAPTURE</div><h3>Save a useful idea</h3></div></div><form id="knowledgeForm" class="stack-form"><div class="field-row"><div class="field"><label for="noteTitle">Title / question</label><input id="noteTitle" maxlength="140" placeholder="Why does DNS matter?" required></div><div class="field"><label for="noteDomain">Domain</label><select id="noteDomain"><option>CYBERSECURITY</option><option>PSYCHOLOGY</option><option>NEUROSCIENCE</option><option>PHILOSOPHY</option><option>AI & CONSCIOUSNESS</option><option>PERSONAL INSIGHT</option></select></div></div><div class="field"><label for="noteBody">Your explanation, connection, or question</label><textarea id="noteBody" rows="4" maxlength="1800" placeholder="Explain it in your own words. Link it to another idea. Note what you still don't understand."></textarea></div><div class="field"><label for="noteLinks">Related concepts (comma separated)</label><input id="noteLinks" maxlength="240" placeholder="attention, habit loops, social engineering"></div><button class="primary-button" type="submit">＋ Add to vault</button></form></section>
+      <div class="vault-toolbar"><input id="knowledgeSearch" placeholder="Search your knowledge vault…" aria-label="Search knowledge vault"><span id="knowledgeCount" class="section-note">0 NOTES</span></div><div id="knowledgeList" class="knowledge-grid"></div>
+    </section>
+
+    <section class="view" id="view-usage">
+      <div class="page-intro"><div class="eyebrow">ATTENTION / DIGITAL BEHAVIOUR</div><h1>Digital psycho <em>analysis.</em></h1><p>Understand the patterns behind your digital habits — what captures your attention, what triggers automatic checking, where time slips away, and how online behaviour may affect your focus, mood, sleep, and goals.</p></div>
+      <section class="usage-labs-section" aria-labelledby="usageLabsTitle">
+        <div class="section-heading compact-heading"><div><div class="eyebrow">SELF-AWARENESS / COMING SOON</div><h2 id="usageLabsTitle">Your digital behaviour analysers</h2><p class="section-subtitle">Each analyser is designed to turn usage patterns into practical insights — without labelling you or diagnosing a mental-health condition.</p></div></div>
+        <div class="usage-labs-grid">
+          <article class="panel analyser-feature-card instagram-card"><div class="analyser-feature-top"><div class="feature-brand-icon instagram-brand" role="img" aria-label="Instagram logo"><svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="instaGradientUsage" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FFB000"/><stop offset=".48" stop-color="#E1306C"/><stop offset="1" stop-color="#833AB4"/></linearGradient></defs><rect x="3" y="3" width="42" height="42" rx="12" fill="url(#instaGradientUsage)"/><rect x="12" y="12" width="24" height="24" rx="7" fill="none" stroke="#fff" stroke-width="3"/><circle cx="24" cy="24" r="6" fill="none" stroke="#fff" stroke-width="3"/><circle cx="32" cy="16" r="2" fill="#fff"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div><div class="eyebrow">INSTAGRAM / SOCIAL FEEDS</div><h3>Insta Psycho Analyser</h3><p>Explore scrolling sessions, repeat checking, engagement triggers, and how you feel before and after using Instagram. It can help reveal when social browsing is intentional and when it becomes automatic.</p><div class="analyser-feature-tags"><span>Checking loops</span><span>Attention triggers</span><span>Mood patterns</span></div><p class="analyser-help"><strong>How it helps:</strong> Recognise habits that consume time or affect confidence, then build more deliberate boundaries.</p></article>
+          <article class="panel analyser-feature-card youtube-card"><div class="analyser-feature-top"><div class="feature-brand-icon youtube-brand" role="img" aria-label="YouTube logo"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="9" width="42" height="30" rx="9" fill="#FF0033"/><path d="M20 16.5 32 24 20 31.5Z" fill="#fff"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div><div class="eyebrow">YOUTUBE / SHORT-FORM FEEDS</div><h3>YouTube Shorts Algorithm Analyser</h3><p>Examine the topics and formats that keep you watching, repeated swipe loops, session length, and the gap between what you planned to watch and what you actually watched.</p><div class="analyser-feature-tags"><span>Scroll loops</span><span>Time drift</span><span>Topic patterns</span></div><p class="analyser-help"><strong>How it helps:</strong> Spot endless-scroll patterns and identify triggers that make it harder to stop when you intended to.</p></article>
+          <article class="panel analyser-feature-card youtube-card"><div class="analyser-feature-top"><div class="feature-brand-icon youtube-brand" role="img" aria-label="YouTube logo"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="3" y="9" width="42" height="30" rx="9" fill="#FF0033"/><path d="M20 16.5 32 24 20 31.5Z" fill="#fff"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div><div class="eyebrow">YOUTUBE / WATCH HABITS</div><h3>YouTube Attention Analyser</h3><p>Compare learning, entertainment, background watching, and late-night viewing to understand which sessions align with your goals and which leave you distracted or drained.</p><div class="analyser-feature-tags"><span>Watch intent</span><span>Session trends</span><span>Learning vs. escape</span></div><p class="analyser-help"><strong>How it helps:</strong> Make your viewing more intentional and protect time for study, rest, and other priorities.</p></article>
+          <article class="panel analyser-feature-card google-card"><div class="analyser-feature-top"><div class="feature-brand-icon google-brand" role="img" aria-label="Google logo"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M43 24.5c0-1.4-.1-2.7-.4-4H24v7.6h10.7a9.2 9.2 0 0 1-4 6v5h6.5C41 35.5 43 30.5 43 24.5Z"/><path fill="#34A853" d="M24 44c5.4 0 9.9-1.8 13.2-4.9l-6.5-5c-1.8 1.2-4 2-6.7 2-5.2 0-9.6-3.5-11.2-8.2H6.1v5.2A20 20 0 0 0 24 44Z"/><path fill="#FBBC05" d="M12.8 27.9a12 12 0 0 1 0-7.8v-5.2H6.1a20 20 0 0 0 0 18.2Z"/><path fill="#EA4335" d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.4 4 24 4A20 20 0 0 0 6.1 14.9l6.7 5.2C14.4 15.5 18.8 12 24 12Z"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div><div class="eyebrow">GOOGLE / SEARCH BEHAVIOUR</div><h3>Google Search Pattern Analyser</h3><p>Map recurring search themes, repeated queries, curiosity trails, and whether searching leads to useful answers or an endless cycle of checking and opening new pages.</p><div class="analyser-feature-tags"><span>Search loops</span><span>Curiosity trails</span><span>Research drift</span></div><p class="analyser-help"><strong>How it helps:</strong> Separate purposeful research from reassurance-seeking or rabbit holes, and finish searches with clearer next steps.</p></article>
+          <article class="panel analyser-feature-card browser-card"><div class="analyser-feature-top"><div class="feature-brand-pair" aria-label="Chrome and Brave browser icons"><span class="chrome-brand" role="img" aria-label="Chrome logo"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#EA4335"/><path d="M24 24 13 43A22 22 0 0 1 3 14h21Z" fill="#34A853"/><path d="M24 24 13 43a22 22 0 0 0 32-26H23Z" fill="#FBBC05"/><circle cx="24" cy="24" r="10" fill="#4285F4" stroke="#EAF2FF" stroke-width="2"/></svg></span><span class="brave-brand" role="img" aria-label="Brave logo"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M13 5h22l3 8 5 5-4 17-15 9L9 35 5 18l5-5Z" fill="#FB542B"/><path d="m15 13 9-4 9 4 3 8-5 13-7 4-7-4-5-13Z" fill="#fff"/><path d="m16 20 5 2 3-2 3 2 5-2-3 7-5 4-5-4Z" fill="#FB542B"/></svg></span></div><span class="analyser-coming-badge">COMING SOON</span></div><div class="eyebrow">CHROME + BRAVE / BROWSING</div><h3>Browser Behaviour Analyser</h3><p>Look for tab hopping, repeated website visits, research rabbit holes, and the difference between purposeful browsing and distraction-driven browsing.</p><div class="analyser-feature-tags"><span>Tab switching</span><span>Site patterns</span><span>Focus drift</span></div><p class="analyser-help"><strong>How it helps:</strong> Reduce fragmented attention, organise research sessions, and notice when browsing stops serving the task.</p></article>
+          <article class="panel analyser-feature-card phone-card"><div class="analyser-feature-top"><div class="feature-brand-icon phone-brand" role="img" aria-label="Mobile phone icon"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="11" y="3" width="26" height="42" rx="6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M19 9h10M21 38h6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="24" r="7" fill="currentColor" opacity=".15"/><path d="M24 19v5l4 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><span class="analyser-coming-badge">COMING SOON</span></div><div class="eyebrow">PHONE / DAILY DEVICE HABITS</div><h3>Mobile Usage Pattern Analyser</h3><p>Explore frequent pickups, notification-driven checking, late-night phone use, and how device habits relate to your routines and concentration.</p><div class="analyser-feature-tags"><span>Pickup triggers</span><span>Notification loops</span><span>Night use</span></div><p class="analyser-help"><strong>How it helps:</strong> Find high-friction moments in your day and create realistic boundaries for sleep, focus, and offline time.</p></article>
+        </div>
+        <p class="analyser-data-note">All analysers are coming soon. Future insights will depend on data you provide or supported integrations. They are intended for self-reflection, not clinical diagnosis, and will not claim to read private app activity automatically without permission.</p>
+      </section>
+    </section>
+
+    <section class="view" id="view-journal">
+      <div class="page-intro"><div class="eyebrow">PRIVATE REFLECTION / SELF-OBSERVATION</div><h1>Write it <em>clearly.</em></h1><p>A journal for thoughts, emotions, decisions, and patterns you want to understand. Write honestly; this is observation, not self-judgment.</p></div>
+      <section class="panel"><div class="panel-heading"><div><div class="eyebrow">NEW ENTRY</div><h3>What is on your mind?</h3></div></div><form id="journalForm" class="stack-form"><div class="field-row"><div class="field"><label for="journalTitle">Title</label><input id="journalTitle" maxlength="120" placeholder="A thought worth keeping"></div><div class="field"><label for="journalMood">Current mood</label><select id="journalMood"><option>Neutral</option><option>Calm</option><option>Curious</option><option>Motivated</option><option>Happy</option><option>Grateful</option><option>Anxious</option><option>Frustrated</option><option>Sad</option><option>Overwhelmed</option><option>Uncertain</option></select></div></div><div class="field"><label for="journalBody">Entry</label><textarea id="journalBody" rows="7" maxlength="12000" required placeholder="What happened? What did you think and feel? What might you be missing? What do you want to do next?"></textarea></div><div class="field"><label for="journalTags">Tags (optional)</label><input id="journalTags" maxlength="160" placeholder="work, relationships, attention, philosophy"></div><button class="primary-button" type="submit">Save journal entry</button></form></section>
+      <section class="panel"><div class="panel-heading"><div><div class="eyebrow">YOUR RECORDS</div><h3>Journal archive</h3></div><span class="section-note" id="journalCount">0 ENTRIES</span></div><div id="journalList" class="journal-list"></div></section>
+    </section>
+
+    <section class="view" id="view-future">
+      <div class="mind-hero future-hero"><div class="mind-aurora aurora-one"></div><div class="mind-aurora aurora-two"></div><div class="mind-hero-content"><div class="eyebrow"><span class="eyebrow-line"></span> FUTURE SELF / 90-DAY HORIZON</div><h1>Become someone<br><em>you can demonstrate.</em></h1><p>Use your vision as a compass, then build evidence through small, repeatable actions. This is a direction—not a demand for perfection.</p></div></div>
+      <section class="panel future-form-panel"><div class="eyebrow">DEFINE THE DIRECTION</div><form id="futureForm" class="stack-form"><div class="field"><label for="futureIdentity">Who are you working to become?</label><textarea id="futureIdentity" rows="2" maxlength="500" placeholder="A capable cybersecurity practitioner who thinks clearly and keeps learning…"></textarea></div><div class="field"><label for="futureEvidence">What evidence would prove you're moving toward it?</label><textarea id="futureEvidence" rows="3" maxlength="700" placeholder="A documented lab, a completed project, a clear write-up, a routine I can repeat…"></textarea></div><div class="field"><label for="futureQuarter">Your 90-day focus</label><input id="futureQuarter" maxlength="180" placeholder="Build strong Linux and networking foundations"></div><div class="field"><label for="futureWeekly">One action for this week</label><input id="futureWeekly" maxlength="180" placeholder="Complete three networking lessons and write notes"></div><button class="primary-button" type="submit">Save my direction</button></form></section>
+      <section class="panel"><div class="eyebrow">PROOF LOG</div><h3>Evidence I have built</h3><p class="entry-desc">Record real outputs—not intentions. These become the story of your progress.</p><form id="evidenceForm" class="inline-form"><input id="evidenceInput" maxlength="180" placeholder="e.g. Completed first legal networking lab" aria-label="Evidence of progress"><button class="add-button" type="submit">＋</button></form><div id="evidenceList" class="evidence-list"></div></section>
+    </section>
+
+
+  <div class="task-alert-backdrop" id="taskAlertBackdrop" hidden role="presentation"><section class="task-alert-modal" role="dialog" aria-modal="true" aria-labelledby="taskAlertTitle"><button class="task-alert-close" id="taskAlertClose" aria-label="Close task alert">×</button><div class="eyebrow">YOUR ATTENTION / CHECK-IN</div><h2 id="taskAlertTitle">Your tasks need attention.</h2><p class="task-alert-subtitle">Overdue tasks and tasks due soon.</p><div id="taskAlertList" class="task-alert-list"></div><button class="primary-button" id="taskAlertDone">Continue to The Inner OS</button></section></div>
+    <footer class="footer"><span>SHASHANTH REDDY / SPACE</span><span>LESS NOISE. MORE INTENTION. REAL PROGRESS.</span></footer>
+  </main>
+</div>
+
+<dialog id="editDialog">
+  <form method="dialog" id="editorForm">
+    <div class="dialog-head"><div><div class="eyebrow" id="dialogEyebrow">EDIT ENTRY</div><h2 id="dialogTitle">New entry</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+    <div id="dialogFields" class="dialog-fields"></div>
+    <div class="dialog-actions"><button class="secondary-button" value="cancel">Cancel</button><button class="primary-button" id="saveEntry" value="save">Save entry</button></div>
+  </form>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="ascend-insights.js"></script>
+<script src="app.js"></script>
+<script src="ascend-ios27.js" defer></script>
+</body>
+</html>
